@@ -1,13 +1,15 @@
 package org.vorobel.moneytransfer;
 
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class AccountTest {
     @Test
     void testCreation() {
-        assertEquals(1,1);
+        var initialBalance = "0.01";
+        var account = new Account(initialBalance);
+        assertEquals(initialBalance, account.getBalance());
+        assertDoesNotThrow(() -> new Account());
+        assertDoesNotThrow(() -> new Account(null, initialBalance));
     }
-
 }
