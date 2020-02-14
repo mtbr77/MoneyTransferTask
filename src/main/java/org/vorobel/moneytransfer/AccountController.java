@@ -2,6 +2,7 @@ package org.vorobel.moneytransfer;
 
 import io.javalin.apibuilder.CrudHandler;
 import io.javalin.http.Context;
+import io.javalin.plugin.json.JavalinJackson;
 import io.javalin.plugin.json.JavalinJson;
 import io.javalin.plugin.openapi.annotations.*;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +12,7 @@ import javax.inject.Inject;
 public class AccountController implements CrudHandler {
 
     @Inject
-    AccountRepository accountRepository;
+    private AccountRepository accountRepository;
 
     @OpenApi(
             responses = @OpenApiResponse(status = "200", content = @OpenApiContent(from = Account.class, isArray = true))
@@ -39,6 +40,7 @@ public class AccountController implements CrudHandler {
     public void create(@NotNull Context ctx) {
         //Gson gson = new GsonBuilder().create();
         //JavalinJson.setFromJsonMapper(gson::fromJson);
+        //JavalinJackson.getObjectMapper()
         Account account = ctx.bodyAsClass(Account.class);
         accountRepository.save(account);
         ctx.status(201);

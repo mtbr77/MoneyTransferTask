@@ -1,34 +1,26 @@
 package org.vorobel.moneytransfer;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.annotation.Property;
-import lombok.Getter;
-import lombok.Setter;
-import javax.inject.Inject;
+import io.micronaut.context.annotation.Value;
 
 public class MoneyTransferService {
     @Property(name = "httpserver.port")
     int port;
 
-    @Inject
-    HttpRESTServer httpRESTServer;
+    private RESTService restService = new JavalinService();
 
     public static void main(String[] args) {
+        ApplicationContext ctx = ApplicationContext.run();
         var moneyTransferService = new MoneyTransferService();
         moneyTransferService.run();
     }
 
-    public MoneyTransferService() {
-        try (ApplicationContext ctx = ApplicationContext.run()) {
-            httpRESTServer = ctx.getBean(HttpRESTServer.class);
-        }
-    }
-
     public void run() {
-        httpRESTServer.start(port);
+        restService.start(port);
     }
 
     public void stop() {
-        httpRESTServer.stop();
+        restService.stop();
     }
 
 }

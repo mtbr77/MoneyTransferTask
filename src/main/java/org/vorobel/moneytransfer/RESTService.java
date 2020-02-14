@@ -1,6 +1,6 @@
 package org.vorobel.moneytransfer;
 
-public interface HttpRESTServer {
+public interface RESTService {
     void start(int port);
     void stop();
 }

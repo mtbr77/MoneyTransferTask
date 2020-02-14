@@ -1,38 +1,35 @@
 package org.vorobel.moneytransfer;
 
 import io.javalin.Javalin;
-import javax.inject.Singleton;
 import static io.javalin.apibuilder.ApiBuilder.crud;
 
-@Singleton
-public class JavalinServerImpl implements HttpRESTServer {
-    private Javalin server;
+public class JavalinService implements RESTService {
+    private Javalin provider;
 
     @Override
     public void start(int port) {
+        provider.start(port);
 
-        server = create().start(port);
-
-        server.routes(() -> {
+        provider.routes(() -> {
             crud("accounts/:id", new AccountController());
         });
 
-        server.exception(Exception.class, (e, ctx) -> {
+        provider.exception(Exception.class, (e, ctx) -> {
             e.printStackTrace();
             ctx.result(e.getMessage());
         });
     }
 
-    private Javalin create() {
+    public JavalinService() {
         if (SwaggerService.isNeeded()) {
-            return Javalin.create(SwaggerService.getSwaggerPluginConfigConsumer());
+            provider = Javalin.create(SwaggerService.getSwaggerPluginConfigConsumer());
+        } else {
+            provider = Javalin.create();
         }
-
-        return Javalin.create();
     }
 
     @Override
     public void stop() {
-        server.stop();
+        provider.stop();
     }
 }
