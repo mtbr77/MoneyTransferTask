@@ -9,10 +9,12 @@ import io.swagger.v3.oas.models.info.Info;
 
 import java.util.function.Consumer;
 
-import static io.javalin.apibuilder.ApiBuilder.*;
+import static io.javalin.apibuilder.ApiBuilder.crud;
 
-public class Application {
-    public static void main(String[] args) {
+public class HttpServerService {
+    private static Javalin app;
+
+    public static void start() {
         var swaggerPlugin = new OpenApiPlugin(getOpenApiOptions());
         Consumer<JavalinConfig> SwaggerPluginConfigConsumer = config -> config.registerPlugin(swaggerPlugin);
         Javalin app = Javalin.create(SwaggerPluginConfigConsumer).start(7000);
@@ -35,4 +37,5 @@ public class Application {
                 .path("/swagger-docs")
                 .swagger(new SwaggerOptions("/swagger").title("Swagger Documentation"));
     }
+
 }
