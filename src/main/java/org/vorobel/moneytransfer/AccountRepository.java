@@ -1,8 +1,8 @@
 package org.vorobel.moneytransfer;
 
 import io.micronaut.data.annotation.Repository;
-import io.micronaut.data.jpa.repository.JpaRepository;
+import io.micronaut.data.repository.CrudRepository;
 
 @Repository
-public interface AccountRepository extends JpaRepository<Account, Long> {
+public interface AccountRepository extends CrudRepository<Account, Long> {
 }

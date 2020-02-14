@@ -3,7 +3,7 @@ package org.vorobel.moneytransfer;
 import io.javalin.Javalin;
 import static io.javalin.apibuilder.ApiBuilder.crud;
 
-public class JavalinService implements RESTService {
+public class JavalinService extends RESTService {
     private Javalin provider;
 
     @Override
@@ -21,7 +21,7 @@ public class JavalinService implements RESTService {
     }
 
     public JavalinService() {
-        if (SwaggerService.isNeeded()) {
+        if (ConfigurationService.isSwaggerNeeded()) {
             provider = Javalin.create(SwaggerService.getSwaggerPluginConfigConsumer());
         } else {
             provider = Javalin.create();

@@ -20,11 +20,9 @@ public class ConfigurationService {
         }
     }
 
-    //public final boolean isProduction = properties.getProperty("app.production");
-    public static int getServicePort() {
+    public static int getRestServicePort() {
         return Integer.parseInt(properties.getProperty("httpserver.port"));
     };
-
     public static boolean isSwaggerNeeded() {
         return Boolean.parseBoolean(properties.getProperty("swagger.ui"));
     }

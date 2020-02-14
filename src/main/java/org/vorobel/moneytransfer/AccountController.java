@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.inject.Inject;
 
 public class AccountController implements CrudHandler {
-
     @Inject
     private AccountRepository accountRepository;
 
