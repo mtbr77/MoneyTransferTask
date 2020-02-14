@@ -42,6 +42,7 @@ public class AccountController implements CrudHandler {
         Account account = ctx.bodyAsClass(Account.class);
         accountRepository.save(account);
         ctx.status(201);
+        ctx.header("Location", "/accounts/" + account.getId());
         ctx.json(account);
     }
 

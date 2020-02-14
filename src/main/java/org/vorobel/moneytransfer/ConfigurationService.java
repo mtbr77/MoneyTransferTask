@@ -7,13 +7,24 @@ import java.util.Properties;
 public class ConfigurationService {
     private static final String PROPERTIES_FILE = "application.properties";
 
-    public static final Properties properties = new Properties();
+    public static Properties properties;
+
+    static {
+        try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(PROPERTIES_FILE)) {
+            properties = new Properties();
+            properties.load(is);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
 
     //public final boolean isProduction = properties.getProperty("app.production");
+    public static int getServicePort() {
+        return Integer.parseInt(properties.getProperty("httpserver.port"));
+    };
 
-    public static void load() throws IOException {
-        try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(PROPERTIES_FILE)) {
-            properties.load(is);
-        }
+    public static boolean isSwaggerNeeded() {
+        return Boolean.parseBoolean(properties.getProperty("swagger.ui"));
     }
 }

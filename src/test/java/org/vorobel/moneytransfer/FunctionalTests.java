@@ -7,30 +7,35 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import static org.assertj.core.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class FunctionalTests {
-
-    private Application app = new Application();
-    private String usersJson = JavalinJson.toJson(UserController.users);
+    private String serverUrl;
+    private MoneyTransferService moneyTransferService;
 
     @BeforeAll
-    public  void () {
-        app.start();
+    public  void initAll() {
+        int port = ConfigurationService.getServicePort();
+        var moneyTransferService = new MoneyTransferService(port);
+        serverUrl = "http://localhost:" + port;
+        moneyTransferService.run();
     }
 
     @Test
-    public void GET_to_fetch_users_returns_list_of_users() {
-        app.start(1234);
-        HttpResponse response = Unirest.get("http://localhost:1234/users").asString();
-        assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(response.getBody()).isEqualTo(usersJson);
+    public void test() {
+        HttpResponse<Account> response = Unirest
+                .post(serverUrl + "/accounts")
+                .body(JavalinJson.toJson(new Account("1")))
+                .asObject(Account.class);
+        assertThat(response.getStatus()).isEqualTo(201);
+        assertThat(response.getBody().getBalance()).isEqualTo("1");
 
     }
 
     @AfterAll
-    static void tearDownAll() {
-        app.stop();
+    public void tearDownAll() {
+        moneyTransferService.stop();
     }
 
 }
