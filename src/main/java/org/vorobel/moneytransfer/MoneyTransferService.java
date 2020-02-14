@@ -1,35 +1,26 @@
 package org.vorobel.moneytransfer;
-
-import io.javalin.Javalin;
-import io.javalin.core.JavalinConfig;
-import io.javalin.plugin.openapi.OpenApiOptions;
-import io.javalin.plugin.openapi.OpenApiPlugin;
-import io.javalin.plugin.openapi.ui.SwaggerOptions;
 import io.micronaut.context.ApplicationContext;
-import io.swagger.v3.oas.models.info.Info;
+import io.micronaut.context.annotation.Property;
 import lombok.Getter;
-
+import lombok.Setter;
 import javax.inject.Inject;
-import java.util.function.Consumer;
-
-import static io.javalin.apibuilder.ApiBuilder.*;
 
 public class MoneyTransferService {
-    @Getter
-    private int port;
+    @Property(name = "httpserver.port")
+    int port;
 
     @Inject
-    private HttpRESTServer httpRESTServer;
+    HttpRESTServer httpRESTServer;
 
     public static void main(String[] args) {
-        int port = ConfigurationService.getServicePort();
-        var moneyTransferService = new MoneyTransferService(port);
+        var moneyTransferService = new MoneyTransferService();
         moneyTransferService.run();
     }
 
-    public MoneyTransferService(int port) {
-        this.port = port;
-        ApplicationContext.run();
+    public MoneyTransferService() {
+        try (ApplicationContext ctx = ApplicationContext.run()) {
+            httpRESTServer = ctx.getBean(HttpRESTServer.class);
+        }
     }
 
     public void run() {

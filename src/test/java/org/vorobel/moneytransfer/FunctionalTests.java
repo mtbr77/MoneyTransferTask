@@ -1,8 +1,11 @@
 package org.vorobel.moneytransfer;
 
 import io.javalin.plugin.json.JavalinJson;
+import io.micronaut.context.annotation.Value;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
+import lombok.Getter;
+import lombok.Setter;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -11,13 +14,14 @@ import static org.assertj.core.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class FunctionalTests {
+    @Value("${httpserver.port}")
+    int port;
     private String serverUrl;
     private MoneyTransferService moneyTransferService;
 
     @BeforeAll
-    public  void initAll() {
-        int port = ConfigurationService.getServicePort();
-        var moneyTransferService = new MoneyTransferService(port);
+    public void initAll() {
+        moneyTransferService = new MoneyTransferService();
         serverUrl = "http://localhost:" + port;
         moneyTransferService.run();
     }
