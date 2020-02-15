@@ -26,6 +26,10 @@ public class JavalinService extends RESTService {
         } else {
             provider = Javalin.create();
         }
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            provider.stop();
+        }));
     }
 
     @Override

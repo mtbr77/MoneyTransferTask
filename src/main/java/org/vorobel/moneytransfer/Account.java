@@ -9,19 +9,17 @@ import javax.persistence.*;
 @Table(name = "accounts")
 @NoArgsConstructor
 @RequiredArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Getter
-    @Setter
     @JsonIgnore
-    private Long id;
+    @Getter
+    private long id;
 
+    @JsonProperty(required = true)
+    @NonNull
     @Getter
     @Setter
-    @NonNull
-    @JsonProperty(required = true)
     private String balance;
 }

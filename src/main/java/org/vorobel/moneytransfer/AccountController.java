@@ -11,7 +11,7 @@ import javax.inject.Inject;
 
 public class AccountController implements CrudHandler {
     @Inject
-    private AccountRepository accountRepository;
+    AccountRepository accountRepository;
 
     @OpenApi(
             responses = @OpenApiResponse(status = "200", content = @OpenApiContent(from = Account.class, isArray = true))
@@ -19,7 +19,7 @@ public class AccountController implements CrudHandler {
     @Override
     public void getAll(@NotNull Context ctx) {
         ctx.status(200);
-        ctx.json(accountRepository.findAll());
+        //ctx.json(accountRepository.findAll());
     }
 
     @OpenApi(
@@ -29,7 +29,7 @@ public class AccountController implements CrudHandler {
     @Override
     public void getOne(@NotNull Context ctx, @NotNull String id) {
         ctx.status(200);
-        ctx.json(accountRepository.findById(Long.valueOf(id)).orElse(null));
+        //ctx.json(accountRepository.findById(Long.valueOf(id)).orElse(null));
     }
 
     @OpenApi(
@@ -41,9 +41,10 @@ public class AccountController implements CrudHandler {
         //JavalinJson.setFromJsonMapper(gson::fromJson);
         //JavalinJackson.getObjectMapper()
         Account account = ctx.bodyAsClass(Account.class);
-        accountRepository.save(account);
+        //accountRepository.save(account);
         ctx.status(201);
-        ctx.header("Location", "/accounts/" + account.getId());
+        long id = account.getId();
+        ctx.header("Location", "/accounts/" + id);
         ctx.json(account);
     }
 
