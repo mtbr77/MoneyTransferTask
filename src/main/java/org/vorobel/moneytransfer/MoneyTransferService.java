@@ -6,7 +6,6 @@ public class MoneyTransferService {
     @Getter
     private int restPort;
     private RESTService restService;
-    //private WeldContainer container;
 
     public MoneyTransferService() {
         restPort = ConfigurationService.getRestServicePort();
@@ -19,8 +18,6 @@ public class MoneyTransferService {
     }
 
     private void init() {
-        // weld = new Weld();
-        //container = weld.initialize();
         restService = RESTService.create();
     }
 
@@ -35,6 +32,5 @@ public class MoneyTransferService {
 
     public void stop() {
         restService.stop();
-        //container.shutdown();
     }
 }
