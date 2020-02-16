@@ -4,9 +4,7 @@ import io.javalin.apibuilder.CrudHandler;
 import io.javalin.http.Context;
 import io.javalin.plugin.openapi.annotations.*;
 import org.jetbrains.annotations.NotNull;
-
 import javax.inject.Inject;
-import javax.transaction.Transactional;
 
 public class AccountController implements CrudHandler {
     @Inject
@@ -37,7 +35,7 @@ public class AccountController implements CrudHandler {
     @Override
     public void create(@NotNull Context ctx) {
         Account account = ctx.bodyAsClass(Account.class);
-        accountRepository.save(account);
+        //accountRepository.save(account);
         ctx.status(201);
         long id = account.getId();
         ctx.header("Location", "/accounts/" + id);
