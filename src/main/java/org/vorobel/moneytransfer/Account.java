@@ -7,6 +7,8 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "accounts")
+@Getter
+@Setter
 @NoArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode
@@ -14,12 +16,9 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
-    @Getter
     private long id;
 
-    @JsonProperty(required = true)
     @NonNull
-    @Getter
-    @Setter
+    @JsonProperty(required = true)
     private String balance;
 }

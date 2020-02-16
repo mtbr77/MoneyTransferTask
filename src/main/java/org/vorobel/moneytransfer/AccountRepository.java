@@ -1,4 +1,8 @@
 package org.vorobel.moneytransfer;
 
-public interface AccountRepository {
+import org.apache.deltaspike.data.api.EntityRepository;
+import org.apache.deltaspike.data.api.Repository;
+
+@Repository//(forEntity = Account.class)
+public interface AccountRepository extends EntityRepository<Account, Long> {
 }
