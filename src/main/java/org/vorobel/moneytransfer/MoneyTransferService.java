@@ -1,5 +1,4 @@
 package org.vorobel.moneytransfer;
-
 import lombok.Getter;
 
 public class MoneyTransferService {
@@ -22,8 +21,8 @@ public class MoneyTransferService {
     }
 
     public static void main(String[] args) {
-        var service = new MoneyTransferService();
-        service.start();
+        var moneyTransferService = new MoneyTransferService();
+        moneyTransferService.start();
     }
 
     public void start() {
