@@ -18,8 +18,9 @@ public class TransferController implements CrudHandler {
     @Override
     public void create(@NotNull Context context) {
         Transfer transfer = context.bodyAsClass(Transfer.class);
-        context.header("Location", "/accounts/" + transfer.getId());
-        //context.json();
+        transfer.persistAndFlush();
+        context.header("Location", "/transfers/" + transfer.getId());
+        context.json(transfer);
         context.status(201);
     }
 

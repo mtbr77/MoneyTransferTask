@@ -5,8 +5,11 @@ import io.javalin.http.Context;
 import io.javalin.plugin.openapi.annotations.*;
 import org.jetbrains.annotations.NotNull;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 public class AccountController implements CrudHandler {
-    private AccountRepository accountRepository;
+    AccountRepository accountRepository = new AccountRepository();
 
     @OpenApi(
             responses = @OpenApiResponse(status = "200", content = @OpenApiContent(from = Account.class, isArray = true))
@@ -24,7 +27,7 @@ public class AccountController implements CrudHandler {
     @Override
     public void getOne(@NotNull Context context, @NotNull String id) {
         //404
-        context.json(accountRepository.findById(Long.valueOf(id)).orElse(null));
+        //context.json(accountRepository.findById(Long.valueOf(id)).orElse(null));
         context.status(200);
     }
 
@@ -33,7 +36,8 @@ public class AccountController implements CrudHandler {
     )
     @Override
     public void create(@NotNull Context context) {
-        Account account = accountRepository.save(context.bodyAsClass(Account.class));
+        Account account = context.bodyAsClass(Account.class);
+        accountRepository.persist(account);
         context.header("Location", "/accounts/" + account.getId());
         context.json(account);
         context.status(201);
@@ -46,10 +50,12 @@ public class AccountController implements CrudHandler {
     @Override
     public void update(@NotNull Context context, @NotNull String idString) {
         long id = Long.valueOf(idString);
-        if (accountRepository.existsById(id)) {
-            Account account = context.bodyAsClass(Account.class);
-            account.setId(id);
-            context.json(accountRepository.update(account));
+        Account account = accountRepository.findById(id);
+        if (account != null) {
+            Account newAccount = context.bodyAsClass(Account.class);
+            newAccount.setId(id);
+            accountRepository.persist(newAccount);
+            context.json(newAccount);
             context.status(200);
         } else context.status(404);
     }
@@ -60,7 +66,9 @@ public class AccountController implements CrudHandler {
     )
     @Override
     public void delete(@NotNull Context context, @NotNull String idString) {
-        accountRepository.deleteById(Long.valueOf(idString));
+        long id = Long.valueOf(idString);
+        Account account = accountRepository.findById(id);
+        accountRepository.delete(account);
         context.status(200);
     }
 }

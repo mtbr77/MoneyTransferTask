@@ -1,4 +1,6 @@
 package org.vorobel.moneytransfer;
 
-public interface AccountRepository {
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+
+public class AccountRepository implements PanacheRepository<Account> {
 }

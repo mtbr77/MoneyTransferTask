@@ -1,6 +1,7 @@
 package org.vorobel.moneytransfer;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import lombok.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
