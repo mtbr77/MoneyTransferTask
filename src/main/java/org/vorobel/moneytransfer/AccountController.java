@@ -2,17 +2,10 @@ package org.vorobel.moneytransfer;
 
 import io.javalin.apibuilder.CrudHandler;
 import io.javalin.http.Context;
-import io.javalin.plugin.json.JavalinJackson;
-import io.javalin.plugin.json.JavalinJson;
 import io.javalin.plugin.openapi.annotations.*;
 import org.jetbrains.annotations.NotNull;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
 public class AccountController implements CrudHandler {
-    @Inject
     private AccountRepository accountRepository;
 
     @OpenApi(
