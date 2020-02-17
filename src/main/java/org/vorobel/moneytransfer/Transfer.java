@@ -3,6 +3,7 @@ package org.vorobel.moneytransfer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -14,7 +15,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @EqualsAndHashCode
 @JsonPropertyOrder({ "id", "balance" })
-public class Transfer {
+public class Transfer extends PanacheEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;

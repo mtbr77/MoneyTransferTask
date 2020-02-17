@@ -1,8 +1,6 @@
 package org.vorobel.moneytransfer;
 
-import io.micronaut.data.annotation.Repository;
-import io.micronaut.data.repository.CrudRepository;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
 
-@Repository
-public interface AccountRepository extends CrudRepository<Account, Long> {
+public class AccountRepository implements PanacheRepository<Account> {
 }
