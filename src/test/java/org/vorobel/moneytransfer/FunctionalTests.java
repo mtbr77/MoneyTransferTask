@@ -18,7 +18,7 @@ public class FunctionalTests {
     public void initAll() {
         moneyTransferService = new MoneyTransferService();
         serverUrl = "http://localhost:" + moneyTransferService.getRestPort();
-        moneyTransferService.run();
+        moneyTransferService.start();
     }
 
     @Test

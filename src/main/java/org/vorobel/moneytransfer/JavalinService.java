@@ -1,6 +1,8 @@
 package org.vorobel.moneytransfer;
 
 import io.javalin.Javalin;
+import io.micronaut.context.ApplicationContext;
+
 import static io.javalin.apibuilder.ApiBuilder.crud;
 
 public class JavalinService extends RESTService {
@@ -10,8 +12,11 @@ public class JavalinService extends RESTService {
     public void start(int port) {
         provider.start(port);
 
+        ApplicationContext appCtx = ApplicationContext.run();
+
         provider.routes(() -> {
-            crud("accounts/:id", new AccountController());
+            crud("accounts/:id", appCtx.getBean(AccountController.class));
+            crud("transfers/:id", appCtx.getBean(TransferController.class));
         });
 
         provider.exception(Exception.class, (e, ctx) -> {
@@ -26,6 +31,10 @@ public class JavalinService extends RESTService {
         } else {
             provider = Javalin.create();
         }
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            provider.stop();
+        }));
     }
 
     @Override

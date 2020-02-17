@@ -1,27 +1,35 @@
 package org.vorobel.moneytransfer;
-import io.micronaut.context.ApplicationContext;
 import lombok.Getter;
-import lombok.Setter;
 
 public class MoneyTransferService {
-    @Setter
     @Getter
-    private int restPort = ConfigurationService.getRestServicePort();
+    private int restPort;
+    private RESTService restService;
 
-    private RESTService restService = RESTService.create();
-
-    public static void main(String[] args) {
-        ApplicationContext ctx = ApplicationContext.run();
-        var moneyTransferService = new MoneyTransferService();
-        moneyTransferService.run();
+    public MoneyTransferService() {
+        restPort = ConfigurationService.getRestServicePort();
+        init();
     }
 
-    public void run() {
+    public MoneyTransferService(int restPort) {
+        this.restPort = restPort;
+        init();
+    }
+
+    private void init() {
+        restService = RESTService.create();
+    }
+
+    public static void main(String[] args) {
+        var moneyTransferService = new MoneyTransferService();
+        moneyTransferService.start();
+    }
+
+    public void start() {
         restService.start(restPort);
     }
 
     public void stop() {
         restService.stop();
     }
-
 }

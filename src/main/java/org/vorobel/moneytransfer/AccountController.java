@@ -8,7 +8,9 @@ import io.javalin.plugin.openapi.annotations.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class AccountController implements CrudHandler {
     @Inject
     private AccountRepository accountRepository;
@@ -17,9 +19,9 @@ public class AccountController implements CrudHandler {
             responses = @OpenApiResponse(status = "200", content = @OpenApiContent(from = Account.class, isArray = true))
     )
     @Override
-    public void getAll(@NotNull Context ctx) {
-        ctx.status(200);
-        ctx.json(accountRepository.findAll());
+    public void getAll(@NotNull Context context) {
+        context.status(200);
+        context.json(accountRepository.findAll());
     }
 
     @OpenApi(
@@ -27,24 +29,21 @@ public class AccountController implements CrudHandler {
             responses = @OpenApiResponse(status = "200", content = @OpenApiContent(from = Account.class))
     )
     @Override
-    public void getOne(@NotNull Context ctx, @NotNull String id) {
-        ctx.status(200);
-        ctx.json(accountRepository.findById(Long.valueOf(id)).orElse(null));
+    public void getOne(@NotNull Context context, @NotNull String id) {
+        //404
+        context.json(accountRepository.findById(Long.valueOf(id)).orElse(null));
+        context.status(200);
     }
 
     @OpenApi(
             responses = @OpenApiResponse(status = "201", content = @OpenApiContent(from = Account.class))
     )
     @Override
-    public void create(@NotNull Context ctx) {
-        //Gson gson = new GsonBuilder().create();
-        //JavalinJson.setFromJsonMapper(gson::fromJson);
-        //JavalinJackson.getObjectMapper()
-        Account account = ctx.bodyAsClass(Account.class);
-        accountRepository.save(account);
-        ctx.status(201);
-        ctx.header("Location", "/accounts/" + account.getId());
-        ctx.json(account);
+    public void create(@NotNull Context context) {
+        Account account = accountRepository.save(context.bodyAsClass(Account.class));
+        context.header("Location", "/accounts/" + account.getId());
+        context.json(account);
+        context.status(201);
     }
 
     @OpenApi(
@@ -52,8 +51,14 @@ public class AccountController implements CrudHandler {
             responses = @OpenApiResponse(status = "200", content = @OpenApiContent(from = Account.class))
     )
     @Override
-    public void update(@NotNull Context ctx, @NotNull String s) {
-
+    public void update(@NotNull Context context, @NotNull String idString) {
+        long id = Long.valueOf(idString);
+        if (accountRepository.existsById(id)) {
+            Account account = context.bodyAsClass(Account.class);
+            account.setId(id);
+            context.json(accountRepository.update(account));
+            context.status(200);
+        } else context.status(404);
     }
 
     @OpenApi(
@@ -61,7 +66,8 @@ public class AccountController implements CrudHandler {
             responses = @OpenApiResponse(status = "200", content = @OpenApiContent(from = Account.class))
     )
     @Override
-    public void delete(@NotNull Context ctx, @NotNull String s) {
-
+    public void delete(@NotNull Context context, @NotNull String idString) {
+        accountRepository.deleteById(Long.valueOf(idString));
+        context.status(200);
     }
 }

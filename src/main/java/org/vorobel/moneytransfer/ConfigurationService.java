@@ -21,7 +21,7 @@ public class ConfigurationService {
     }
 
     public static int getRestServicePort() {
-        return Integer.parseInt(properties.getProperty("httpserver.port"));
+        return Integer.parseInt(properties.getProperty("restserver.port"));
     };
     public static boolean isSwaggerNeeded() {
         return Boolean.parseBoolean(properties.getProperty("swagger.ui"));
