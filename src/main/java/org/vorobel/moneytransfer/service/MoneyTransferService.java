@@ -3,8 +3,6 @@ package org.vorobel.moneytransfer.service;
 import io.quarkus.runtime.StartupEvent;
 import lombok.Getter;
 import lombok.Setter;
-import org.vorobel.moneytransfer.service.ConfigurationService;
-import org.vorobel.moneytransfer.service.RESTService;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;

@@ -13,6 +13,7 @@ import org.vorobel.moneytransfer.model.Transfer;
 import javax.inject.Singleton;
 import javax.persistence.LockModeType;
 import javax.transaction.Transactional;
+import java.sql.Timestamp;
 
 @Singleton
 public class TransferController implements CrudHandler {
@@ -39,24 +40,28 @@ public class TransferController implements CrudHandler {
     }
 
     @OpenApi(
-            responses = @OpenApiResponse(status = "201", content = @OpenApiContent(from = Transfer.class))
+            responses = @OpenApiResponse(status = "200", content = @OpenApiContent(from = Transfer.class))
     )
     @Override
     @Transactional
     public void create(@NotNull Context context) {
         Transfer transfer = context.bodyAsClass(Transfer.class);
-        Account account = Account.findById(transfer.sourceId, LockModeType.PESSIMISTIC_WRITE);
-        if (account != null) {
-            Account newAccount = context.bodyAsClass(Account.class);
-            account.update("balance", newAccount.balance);
-            context.json(account);
-            context.status(200);
-        } else context.status(404);
+        Account sourceAccount = Account.findById(transfer.source, LockModeType.PESSIMISTIC_WRITE);
 
-        transfer.persistAndFlush();
+        if (sourceAccount != null && sourceAccount.enoughForWithdraw(transfer.amount)) {
+            Account destinationAccount = Account.findById(transfer.destination, LockModeType.PESSIMISTIC_WRITE);
+            if (destinationAccount != null) {
+                sourceAccount.update("balance", sourceAccount.withdraw(transfer.amount));
+                destinationAccount.update("balance", destinationAccount.deposit(transfer.amount));
+                transfer.success = true;
+                context.status(200);
+            } else context.status(400);
+        } else context.status(400);
+
+        transfer.time = new Timestamp(System.currentTimeMillis());
+        transfer.persist();
         context.header("Location", "/transfers/" + transfer.id);
         context.json(transfer);
-        context.status(201);
     }
 
     @OpenApi(

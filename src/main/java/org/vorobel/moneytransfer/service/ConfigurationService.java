@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-//TODO: delete
 public class ConfigurationService {
     private static final String PROPERTIES_FILE = "application.properties";
 
