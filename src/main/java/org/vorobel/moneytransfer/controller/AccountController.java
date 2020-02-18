@@ -1,23 +1,24 @@
-package org.vorobel.moneytransfer;
+package org.vorobel.moneytransfer.controller;
 
 import io.javalin.apibuilder.CrudHandler;
 import io.javalin.http.Context;
 import io.javalin.plugin.openapi.annotations.*;
 import org.jetbrains.annotations.NotNull;
+import org.vorobel.moneytransfer.model.Account;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.persistence.LockModeType;
+import javax.transaction.Transactional;
 
+@Singleton
 public class AccountController implements CrudHandler {
-    AccountRepository accountRepository = new AccountRepository();
-
     @OpenApi(
             responses = @OpenApiResponse(status = "200", content = @OpenApiContent(from = Account.class, isArray = true))
     )
     @Override
     public void getAll(@NotNull Context context) {
         context.status(200);
-        context.json(accountRepository.findAll());
+        context.json(Account.listAll());
     }
 
     @OpenApi(
@@ -26,19 +27,22 @@ public class AccountController implements CrudHandler {
     )
     @Override
     public void getOne(@NotNull Context context, @NotNull String id) {
-        //404
-        //context.json(accountRepository.findById(Long.valueOf(id)).orElse(null));
-        context.status(200);
+        Account account = Account.findById(id);
+        if (account != null) {
+            context.json(account);
+            context.status(200);
+        } else context.status(404);
     }
 
     @OpenApi(
             responses = @OpenApiResponse(status = "201", content = @OpenApiContent(from = Account.class))
     )
     @Override
+    @Transactional
     public void create(@NotNull Context context) {
         Account account = context.bodyAsClass(Account.class);
-        accountRepository.persist(account);
-        context.header("Location", "/accounts/" + account.getId());
+        account.persistAndFlush();
+        context.header("Location", "/accounts/" + account.id);
         context.json(account);
         context.status(201);
     }
@@ -48,14 +52,12 @@ public class AccountController implements CrudHandler {
             responses = @OpenApiResponse(status = "200", content = @OpenApiContent(from = Account.class))
     )
     @Override
-    public void update(@NotNull Context context, @NotNull String idString) {
-        long id = Long.valueOf(idString);
-        Account account = accountRepository.findById(id);
+    public void update(@NotNull Context context, @NotNull String id) {
+        Account account = Account.findById(id, LockModeType.PESSIMISTIC_WRITE);
         if (account != null) {
             Account newAccount = context.bodyAsClass(Account.class);
-            newAccount.setId(id);
-            accountRepository.persist(newAccount);
-            context.json(newAccount);
+            account.update("balance", newAccount.balance);
+            context.json(account);
             context.status(200);
         } else context.status(404);
     }
@@ -65,10 +67,12 @@ public class AccountController implements CrudHandler {
             responses = @OpenApiResponse(status = "200", content = @OpenApiContent(from = Account.class))
     )
     @Override
-    public void delete(@NotNull Context context, @NotNull String idString) {
-        long id = Long.valueOf(idString);
-        Account account = accountRepository.findById(id);
-        accountRepository.delete(account);
-        context.status(200);
+    @Transactional
+    public void delete(@NotNull Context context, @NotNull String id) {
+        Account account = Account.findById(id, LockModeType.PESSIMISTIC_WRITE);
+        if (account != null) {
+            account.delete();
+            context.status(200);
+        } else context.status(404);
     }
 }

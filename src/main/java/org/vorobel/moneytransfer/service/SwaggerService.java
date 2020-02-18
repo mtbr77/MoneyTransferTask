@@ -1,4 +1,4 @@
-package org.vorobel.moneytransfer;
+package org.vorobel.moneytransfer.service;
 
 import io.javalin.core.JavalinConfig;
 import io.javalin.plugin.openapi.OpenApiOptions;
