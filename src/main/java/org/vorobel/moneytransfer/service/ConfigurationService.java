@@ -1,4 +1,4 @@
-package org.vorobel.moneytransfer;
+package org.vorobel.moneytransfer.service;
 
 import java.io.IOException;
 import java.io.InputStream;
