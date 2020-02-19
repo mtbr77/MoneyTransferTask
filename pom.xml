@@ -76,13 +76,6 @@
             <version>2.0.9</version>
         </dependency>
 
-        <!--Testing-->
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-junit5</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <!--Persistency-->
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -102,6 +95,13 @@
             <artifactId>hibernate-validator-annotation-processor</artifactId>
             <version>6.1.2.Final</version>
         </dependency-->
+
+        <!--Testing-->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>com.konghq</groupId>
             <artifactId>unirest-java</artifactId>

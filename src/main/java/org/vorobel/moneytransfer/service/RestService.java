@@ -4,8 +4,6 @@ import io.javalin.Javalin;
 import io.quarkus.runtime.StartupEvent;
 import org.vorobel.moneytransfer.controller.TransferController;
 import org.vorobel.moneytransfer.controller.AccountController;
-
-import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;

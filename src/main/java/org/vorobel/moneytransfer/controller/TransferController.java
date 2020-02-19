@@ -32,8 +32,9 @@ public class TransferController implements CrudHandler {
             responses = @OpenApiResponse(status = "200", content = @OpenApiContent(from = Transfer.class))
     )
     @Override
+    @ActivateRequestContext
     public void getOne(@NotNull Context ctx, @NotNull String id) {
-        Transfer transfer = Transfer.findById(id);
+        Transfer transfer = Transfer.findById(Long.valueOf(id));
         if (transfer != null) {
             ctx.json(transfer);
             ctx.status(200);
@@ -47,15 +48,15 @@ public class TransferController implements CrudHandler {
     @Transactional
     public void create(@NotNull Context ctx) {
         Transfer transfer = ctx.bodyValidator(Transfer.class)
-                .check(obj -> obj.isValidAmount())
+                .check(Transfer::isValid)
                 .get();
-        Account sourceAccount = Account.findById(transfer.source, LockModeType.PESSIMISTIC_WRITE);
 
+        Account sourceAccount = Account.findById(transfer.source, LockModeType.PESSIMISTIC_WRITE);
         if (sourceAccount != null && sourceAccount.enoughForWithdraw(transfer.amount)) {
             Account destinationAccount = Account.findById(transfer.destination, LockModeType.PESSIMISTIC_WRITE);
             if (destinationAccount != null) {
-                sourceAccount.update("balance", sourceAccount.withdraw(transfer.amount));
-                destinationAccount.update("balance", destinationAccount.deposit(transfer.amount));
+                Account.update("set balance = ?1 where id = ?2", sourceAccount.withdraw(transfer.amount), sourceAccount.id);
+                Account.update("set balance = ?1 where id = ?2", destinationAccount.deposit(transfer.amount), destinationAccount.id);
                 transfer.success = true;
                 ctx.status(200);
             } else ctx.status(400);
@@ -80,7 +81,6 @@ public class TransferController implements CrudHandler {
             responses = @OpenApiResponse(status = "405", content = @OpenApiContent(from = Transfer.class))
     )
     @Override
-    @Transactional
     public void delete(@NotNull Context ctx, @NotNull String id) {
         ctx.status(405);
     }

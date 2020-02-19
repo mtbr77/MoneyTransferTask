@@ -41,33 +41,33 @@ public class FunctionalTests {
         assertThat(response2.getBody().balance).isEqualTo("9.1");
         assertThat(response2.getBody().id).isEqualTo(2);
 
-        System.out.println(Unirest.get(serverUrl + "/accounts").asString().getBody());
+        System.out.println("(1)"+Unirest.get(serverUrl + "/accounts").asString().getBody());
     }
 
-    //@Test
+    @Test
     @Order(2)
     public void testGetAccounts() {
-        System.out.println(Unirest.get(serverUrl + "/accounts").asString().getBody());
         HttpResponse<Account[]> response = Unirest
                 .get(serverUrl + "/accounts")
                 .asObject(Account[].class);
         assertThat(response.getStatus()).isEqualTo(200);
         Account[] accounts = response.getBody();
         assertThat(accounts[0].balance).isEqualTo("123456780.01");
+        assertThat(accounts[1].balance).isEqualTo("9.1");
     }
 
-    //@Test
+    @Test
     @Order(3)
     public void testTransferCreation() {
-        var json = JavalinJson.toJson(new Transfer(2,1,"9.1"));
-        System.out.println(json);
         HttpResponse<Transfer> response = Unirest
                 .post(serverUrl + "/transfers")
-                .body(json)
+                .body(JavalinJson.toJson(new Transfer(2,1,"9.1")))
                 .asObject(Transfer.class);
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getBody().success).isEqualTo(true);
-        assertThat(response.getBody().id).isEqualTo(1);
+        assertThat(response.getBody().id).isEqualTo(3);
+
+        System.out.println("(2)"+Unirest.get(serverUrl + "/accounts").asString().getBody());
 
         HttpResponse<Account> response1 = Unirest
                 .get(serverUrl + "/accounts/1")
@@ -80,11 +80,11 @@ public class FunctionalTests {
                 .get(serverUrl + "/accounts/2")
                 .asObject(Account.class);
         assertThat(response1.getStatus()).isEqualTo(200);
-        assertThat(response1.getBody().balance).isEqualTo("0");
+        assertThat(response1.getBody().balance).isEqualTo("0.0");
         assertThat(response1.getBody().id).isEqualTo(2);
     }
 
-    //@Test
+    @Test
     @Order(4)
     public void testGetTransfers() {
         HttpResponse<Transfer[]> response = Unirest
@@ -95,5 +95,8 @@ public class FunctionalTests {
         assertThat(transfers[0].amount).isEqualTo("9.1");
         assertThat(transfers[0].success).isTrue();
     }
+
+    @AfterAll
+    public void tearDownAll() { Unirest.shutDown(); }
 
 }

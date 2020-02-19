@@ -31,7 +31,7 @@ public class Transfer extends PanacheEntity {
     }
 
     @JsonIgnore
-    public Boolean isValidAmount() {
-        return new BigDecimal(amount).compareTo(BigDecimal.ZERO) >= 0;
+    public Boolean isValid() {
+        return source >=0 && destination >= 0 && source != destination && new BigDecimal(amount).compareTo(BigDecimal.ZERO) >= 0;
     }
 }

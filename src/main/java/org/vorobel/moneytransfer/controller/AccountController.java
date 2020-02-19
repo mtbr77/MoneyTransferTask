@@ -28,8 +28,9 @@ public class AccountController implements CrudHandler {
             responses = @OpenApiResponse(status = "200", content = @OpenApiContent(from = Account.class))
     )
     @Override
+    @ActivateRequestContext
     public void getOne(@NotNull Context ctx, @NotNull String id) {
-        Account account = Account.findById(id);
+        Account account = Account.findById(Long.valueOf(id));
         if (account != null) {
             ctx.json(account);
             ctx.status(200);
@@ -58,10 +59,11 @@ public class AccountController implements CrudHandler {
     @Override
     @Transactional
     public void update(@NotNull Context ctx, @NotNull String id) {
-        Account account = Account.findById(id, LockModeType.PESSIMISTIC_WRITE);
+        Account account = Account.findById(Long.valueOf(id), LockModeType.PESSIMISTIC_WRITE);
         if (account != null) {
             Account newAccount = ctx.bodyAsClass(Account.class);
-            account.update("balance", newAccount.balance);
+            account.update("set balance = ?1 where id = ?2", newAccount.balance, account.id);
+            account.flush();
             ctx.json(account);
             ctx.status(200);
         } else ctx.status(404);
@@ -74,7 +76,7 @@ public class AccountController implements CrudHandler {
     @Override
     @Transactional
     public void delete(@NotNull Context ctx, @NotNull String id) {
-        Account account = Account.findById(id, LockModeType.PESSIMISTIC_WRITE);
+        Account account = Account.findById(Long.valueOf(id), LockModeType.PESSIMISTIC_WRITE);
         if (account != null) {
             account.delete();
             ctx.status(200);
