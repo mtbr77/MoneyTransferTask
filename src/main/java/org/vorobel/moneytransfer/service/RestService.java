@@ -19,9 +19,9 @@ public class RestService {
     @Inject
     TransferController transferController;
 
-    /*public void initBeanFromQuarkusContext(@Observes StartupEvent event) {
+    public void initBeanFromQuarkusContext(@Observes StartupEvent event) {
         start();
-    }*/
+    }
 
     public RestService() {
         if (ConfigurationService.isSwaggerNeeded()) {
@@ -30,14 +30,11 @@ public class RestService {
             provider = Javalin.create();
         }
 
-
-
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             provider.stop();
         }));
     }
 
-    //@PostConstruct
     public void start() {
         provider.start(ConfigurationService.getRestServicePort());
 

@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class NumbersTest {
-    @Test
+  /*  @Test
     void testDouble() {
         assertNotEquals("111111111111111.01", String.valueOf(111111111111111.01));
     }
@@ -22,5 +22,5 @@ public class NumbersTest {
     @Test
     void testBigDecimalWithString() {
         assertEquals("1.01", (new BigDecimal("1.01")).toString());
-    }
+    }*/
 }

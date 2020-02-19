@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 @Table(name = "transfers")
 @NoArgsConstructor
 @RequiredArgsConstructor
-//@JsonIgnoreProperties(value={ "success"}, allowGetters = true)
 //@JsonPropertyOrder({"source",})
 public class Transfer extends PanacheEntity {
     @NonNull public long source;
@@ -31,6 +30,7 @@ public class Transfer extends PanacheEntity {
         this.success = success;
     }
 
+    @JsonIgnore
     public Boolean isValidAmount() {
         return new BigDecimal(amount).compareTo(BigDecimal.ZERO) >= 0;
     }

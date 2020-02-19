@@ -1,5 +1,6 @@
 package org.vorobel.moneytransfer.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,7 @@ public class Account extends PanacheEntity {
         return new BigDecimal(balance).compareTo(new BigDecimal(amount)) >= 0;
     }
 
+    @JsonIgnore
     public boolean isValidBalance() {
         return new BigDecimal(balance).compareTo(BigDecimal.ZERO) >= 0;
     }

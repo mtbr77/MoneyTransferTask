@@ -8,7 +8,7 @@ import org.vorobel.moneytransfer.model.Account;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AccountTest {
-    @Test
+    //@Test
     void testCreation() {
         var initialBalance = "0.01";
         Account account = new Account(initialBalance);
