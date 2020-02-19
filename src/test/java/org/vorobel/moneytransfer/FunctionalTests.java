@@ -11,7 +11,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.vorobel.moneytransfer.model.Account;
 import org.vorobel.moneytransfer.model.Transfer;
-import org.vorobel.moneytransfer.service.MoneyTransferService;
+import org.vorobel.moneytransfer.service.ConfigurationService;
+import org.vorobel.moneytransfer.service.RestService;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -19,12 +22,12 @@ import static org.assertj.core.api.Assertions.*;
 @QuarkusTest
 public class FunctionalTests {
     private String serverUrl;
-    private MoneyTransferService moneyTransferService;
+    //private RestService moneyTransferService;
 
     @BeforeAll
     public void initAll() {
-        moneyTransferService = Arc.container().instance(MoneyTransferService.class).get();
-        serverUrl = "http://localhost:" + moneyTransferService.getRestPort();
+        //restService = Arc.container().instance(RestService.class).get();
+        serverUrl = "http://localhost:" + ConfigurationService.getRestServicePort();
     }
 
     @Test
@@ -47,6 +50,17 @@ public class FunctionalTests {
     }
 
     @Test
+    public void testGetAccounts() {
+        HttpResponse<Account[]> response = Unirest
+                .get(serverUrl + "/accounts")
+                .asObject(Account[].class);
+        assertThat(response.getStatus()).isEqualTo(200);
+        System.out.println(response.getBody());
+        Account[] accounts = response.getBody();
+        assertThat(accounts[0].balance).isEqualTo("123456780.01");
+    }
+
+    @Test
     public void testTransferCreation() {
         HttpResponse<Transfer> response = Unirest
                 .post(serverUrl + "/transfers")
@@ -55,7 +69,6 @@ public class FunctionalTests {
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getBody().success).isEqualTo(true);
         assertThat(response.getBody().id).isEqualTo(1);
-        assertThat(response.getBody().time).isNotNull();
 
         HttpResponse<Account> response1 = Unirest
                 .get(serverUrl + "/accounts/1")
@@ -72,9 +85,7 @@ public class FunctionalTests {
         assertThat(response1.getBody().id).isEqualTo(2);
     }
 
-    @AfterAll
-    public void tearDownAll() {
-        moneyTransferService.stop();
-    }
+    //@AfterAll
+    //public void tearDownAll() { restService.stop(); }
 
 }

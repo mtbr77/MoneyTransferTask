@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AccountTest {
     @Test
     void testCreation() {
-        String initialBalance = "0.01";
+        var initialBalance = "0.01";
         Account account = new Account(initialBalance);
         assertEquals(initialBalance, account.balance);
         assertDoesNotThrow(() -> new Account());

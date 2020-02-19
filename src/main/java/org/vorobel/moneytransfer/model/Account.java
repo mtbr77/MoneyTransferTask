@@ -27,4 +27,8 @@ public class Account extends PanacheEntity {
     public boolean enoughForWithdraw(String amount) {
         return new BigDecimal(balance).compareTo(new BigDecimal(amount)) >= 0;
     }
+
+    public boolean isValidBalance() {
+        return new BigDecimal(balance).compareTo(BigDecimal.ZERO) >= 0;
+    }
 }

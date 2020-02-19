@@ -13,7 +13,6 @@ import org.vorobel.moneytransfer.model.Transfer;
 import javax.inject.Singleton;
 import javax.persistence.LockModeType;
 import javax.transaction.Transactional;
-import java.sql.Timestamp;
 
 @Singleton
 public class TransferController implements CrudHandler {
@@ -21,9 +20,9 @@ public class TransferController implements CrudHandler {
             responses = @OpenApiResponse(status = "200", content = @OpenApiContent(from = Transfer.class, isArray = true))
     )
     @Override
-    public void getAll(@NotNull Context context) {
-        context.status(200);
-        context.json(Transfer.listAll());
+    public void getAll(@NotNull Context ctx) {
+        ctx.status(200);
+        ctx.json(Transfer.listAll());
     }
 
     @OpenApi(
@@ -31,12 +30,12 @@ public class TransferController implements CrudHandler {
             responses = @OpenApiResponse(status = "200", content = @OpenApiContent(from = Transfer.class))
     )
     @Override
-    public void getOne(@NotNull Context context, @NotNull String id) {
+    public void getOne(@NotNull Context ctx, @NotNull String id) {
         Transfer transfer = Transfer.findById(id);
         if (transfer != null) {
-            context.json(transfer);
-            context.status(200);
-        } else context.status(404);
+            ctx.json(transfer);
+            ctx.status(200);
+        } else ctx.status(404);
     }
 
     @OpenApi(
@@ -44,8 +43,10 @@ public class TransferController implements CrudHandler {
     )
     @Override
     @Transactional
-    public void create(@NotNull Context context) {
-        Transfer transfer = context.bodyAsClass(Transfer.class);
+    public void create(@NotNull Context ctx) {
+        Transfer transfer = ctx.bodyValidator(Transfer.class)
+                .check(obj -> obj.isValidAmount())
+                .get();
         Account sourceAccount = Account.findById(transfer.source, LockModeType.PESSIMISTIC_WRITE);
 
         if (sourceAccount != null && sourceAccount.enoughForWithdraw(transfer.amount)) {
@@ -54,14 +55,13 @@ public class TransferController implements CrudHandler {
                 sourceAccount.update("balance", sourceAccount.withdraw(transfer.amount));
                 destinationAccount.update("balance", destinationAccount.deposit(transfer.amount));
                 transfer.success = true;
-                context.status(200);
-            } else context.status(400);
-        } else context.status(400);
+                ctx.status(200);
+            } else ctx.status(400);
+        } else ctx.status(400);
 
-        transfer.time = new Timestamp(System.currentTimeMillis());
-        transfer.persist();
-        context.header("Location", "/transfers/" + transfer.id);
-        context.json(transfer);
+        transfer.persistAndFlush();
+        ctx.header("Location", "/transfers/" + transfer.id);
+        ctx.json(transfer);
     }
 
     @OpenApi(
@@ -69,8 +69,8 @@ public class TransferController implements CrudHandler {
             responses = @OpenApiResponse(status = "405", content = @OpenApiContent(from = Transfer.class))
     )
     @Override
-    public void update(@NotNull Context context, @NotNull String id) {
-        context.status(405);
+    public void update(@NotNull Context ctx, @NotNull String id) {
+        ctx.status(405);
     }
 
     @OpenApi(
@@ -79,7 +79,7 @@ public class TransferController implements CrudHandler {
     )
     @Override
     @Transactional
-    public void delete(@NotNull Context context, @NotNull String id) {
-        context.status(405);
+    public void delete(@NotNull Context ctx, @NotNull String id) {
+        ctx.status(405);
     }
 }
