@@ -54,10 +54,10 @@
             <artifactId>jetty-io</artifactId>
             <version>9.4.26.v20200117</version>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-logging-json</artifactId>
-        </dependency>
+        </dependency-->
 
         <!--REST & SWAGGER-->
         <dependency>

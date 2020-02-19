@@ -19,8 +19,9 @@ public class RestService {
     @Inject
     TransferController transferController;
 
-    public void initBeanFromQuarkusContext(@Observes StartupEvent event) {
-    }
+    /*public void initBeanFromQuarkusContext(@Observes StartupEvent event) {
+        start();
+    }*/
 
     public RestService() {
         if (ConfigurationService.isSwaggerNeeded()) {
@@ -29,24 +30,26 @@ public class RestService {
             provider = Javalin.create();
         }
 
-        provider.exception(Exception.class, (e, ctx) -> {
-            e.printStackTrace();
-            ctx.status(400);
-            ctx.result(e.getMessage());
-        });
+
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             provider.stop();
         }));
     }
 
-    @PostConstruct
+    //@PostConstruct
     public void start() {
         provider.start(ConfigurationService.getRestServicePort());
 
         provider.routes(() -> {
             crud("accounts/:id", accountController);
             crud("transfers/:id", transferController);
+        });
+
+        provider.exception(Exception.class, (e, ctx) -> {
+            e.printStackTrace();
+            ctx.status(400);
+            ctx.result(e.getMessage());
         });
     }
 

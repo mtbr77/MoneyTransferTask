@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.vorobel.moneytransfer.model.Account;
 import org.vorobel.moneytransfer.model.Transfer;
 
+import javax.enterprise.context.control.ActivateRequestContext;
 import javax.inject.Singleton;
 import javax.persistence.LockModeType;
 import javax.transaction.Transactional;
@@ -20,6 +21,7 @@ public class TransferController implements CrudHandler {
             responses = @OpenApiResponse(status = "200", content = @OpenApiContent(from = Transfer.class, isArray = true))
     )
     @Override
+    @ActivateRequestContext
     public void getAll(@NotNull Context ctx) {
         ctx.status(200);
         ctx.json(Transfer.listAll());

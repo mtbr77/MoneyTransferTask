@@ -7,7 +7,6 @@ import org.vorobel.moneytransfer.model.Account;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@QuarkusTest
 class AccountTest {
     @Test
     void testCreation() {
