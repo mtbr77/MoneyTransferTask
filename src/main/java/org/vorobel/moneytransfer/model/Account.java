@@ -4,16 +4,24 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "accounts")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Account extends PanacheEntity {
     public String balance;
+
+    public static String getTotalBalance(Account[] accounts) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for(Account acc : accounts){
+            sum = sum.add(new BigDecimal(acc.balance));
+        }
+        return sum.toString();
+    }
 
     public String deposit(String amount) {
         balance = new BigDecimal(balance).add(new BigDecimal(amount)).toString();

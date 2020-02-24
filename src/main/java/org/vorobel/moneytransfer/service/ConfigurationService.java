@@ -22,7 +22,25 @@ public class ConfigurationService {
     public static int getRestServicePort() {
         return Integer.parseInt(properties.getProperty("restserver.port"));
     };
+
     public static boolean isSwaggerNeeded() {
         return Boolean.parseBoolean(properties.getProperty("swagger.ui"));
+    }
+
+
+    public static String getInitialBalance() {
+        return properties.getProperty("tests.load.initialBalance");
+    }
+
+    public static String getTransferAmount() {
+        return properties.getProperty("tests.load.transferAmount");
+    }
+
+    public static long getAccountsNumber() {
+        return Long.parseLong(properties.getProperty("tests.load.accountsNumber"));
+    }
+
+    public static long getTransfersNumber() {
+        return Long.parseLong(properties.getProperty("tests.load.transfersNumber"));
     }
 }

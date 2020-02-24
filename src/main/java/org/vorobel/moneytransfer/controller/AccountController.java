@@ -2,16 +2,18 @@ package org.vorobel.moneytransfer.controller;
 
 import io.javalin.apibuilder.CrudHandler;
 import io.javalin.http.Context;
+import io.javalin.http.Handler;
 import io.javalin.plugin.openapi.annotations.*;
 import org.jetbrains.annotations.NotNull;
 import org.vorobel.moneytransfer.model.Account;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.control.ActivateRequestContext;
 import javax.inject.Singleton;
 import javax.persistence.LockModeType;
 import javax.transaction.Transactional;
 
-@Singleton
+@ApplicationScoped
 public class AccountController implements CrudHandler {
     @OpenApi(
             responses = @OpenApiResponse(status = "200", content = @OpenApiContent(from = Account.class, isArray = true))
@@ -82,4 +84,14 @@ public class AccountController implements CrudHandler {
             ctx.status(200);
         } else ctx.status(404);
     }
+
+    @OpenApi(
+            responses = @OpenApiResponse(status = "200")
+    )
+    @ActivateRequestContext
+    @Transactional
+    public void deleteAll(@NotNull Context ctx) {
+        Account.deleteAll();
+        ctx.status(200);
+    };
 }
