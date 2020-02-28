@@ -1,22 +1,26 @@
 package org.vorobel.moneytransfer;
 
 import io.javalin.plugin.json.JavalinJson;
-import io.quarkus.test.junit.QuarkusTest;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import org.junit.jupiter.api.*;
 import org.vorobel.moneytransfer.model.Account;
 import org.vorobel.moneytransfer.model.Transfer;
 import org.vorobel.moneytransfer.service.ConfigurationService;
-
-
+import org.vorobel.moneytransfer.service.RestService;
 import static org.assertj.core.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@QuarkusTest
 public class FunctionalTests {
     private String serverUrl = "http://localhost:" + ConfigurationService.getRestServicePort();
+    private RestService restService = new RestService();
+
+    @BeforeAll
+    public void initAll() {
+        System.out.println("initAll");
+        restService.start();
+    }
 
     @Test
     @Order(1)
@@ -100,6 +104,7 @@ public class FunctionalTests {
 
     @AfterAll
     public void tearDownAll() {
+        restService.stop();
         Unirest.shutDown();
     }
 }

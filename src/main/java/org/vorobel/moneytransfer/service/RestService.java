@@ -1,32 +1,17 @@
 package org.vorobel.moneytransfer.service;
 
 import io.javalin.Javalin;
-import io.quarkus.arc.DefaultBean;
-import io.quarkus.runtime.StartupEvent;
 import org.vorobel.moneytransfer.controller.TransferController;
 import org.vorobel.moneytransfer.controller.AccountController;
-
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import static io.javalin.apibuilder.ApiBuilder.*;
 
-//@ApplicationScoped
 public class RestService {
     private Javalin provider;
-    @Inject
-    AccountController accountController;
-    @Inject
-    TransferController transferController;
-
-    public void initBeanFromQuarkusContext(@Observes StartupEvent event) {
-        start();
-    }
+    private AccountController accountController = new AccountController();
+    private TransferController transferController = new TransferController();
 
     public RestService() {
+        System.out.println("create REST");
         if (ConfigurationService.isSwaggerNeeded()) {
             provider = Javalin.create(SwaggerService.getSwaggerPluginConfigConsumer());
         } else {
@@ -38,8 +23,14 @@ public class RestService {
         }));
     }
 
+    public static void main(String[] args) {
+        new RestService().start();
+    }
+
     public void start() {
         provider.start(ConfigurationService.getRestServicePort());
+
+        System.out.println("PORT: " + provider.port());
 
         provider.routes(() -> {
             crud("/accounts/:id", accountController);

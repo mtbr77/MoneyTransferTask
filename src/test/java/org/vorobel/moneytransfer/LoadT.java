@@ -1,6 +1,5 @@
 package org.vorobel.moneytransfer;
 
-import io.quarkus.test.junit.QuarkusTest;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import lombok.AllArgsConstructor;
@@ -21,8 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@QuarkusTest
-public class LoadTests {
+public class LoadT {
     private final String serverUrl = "http://localhost:" + ConfigurationService.getRestServicePort();
     private final String initialBalance = ConfigurationService.getInitialBalance();
     private final String transferAmount = ConfigurationService.getTransferAmount();
@@ -81,7 +79,7 @@ public class LoadTests {
 
         return BigDecimal.ZERO;
     }
-
+/*
     @Test
     @Order(1)
     public void AccountsCreationTest() throws InterruptedException {
@@ -115,5 +113,5 @@ public class LoadTests {
         System.out.println("% of failed transfers = " + (failedTransfersCounter.intValue()*100/expectedTransfersAmount));
 
         assertThat(getTotalBalance().compareTo(expectedTotalBalance)).isEqualTo(0);
-    }
+    }*/
 }

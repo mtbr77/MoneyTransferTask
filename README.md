@@ -3,7 +3,7 @@
 ### Technologies:
 - Javalin framework for REST
 - H2 in memory database
-- Quarkus framework for persistence
+- Hibernate
 
 ### Solution for concurrent requests from multiple systems and services on behalf of end users:
 
@@ -38,7 +38,7 @@ curl -i -X GET http://localhost:7000/transfers/3
 ### How to run:
 Run tests: mvnw test
 
-Run application: mvnw compile quarkus:dev
+Run application: mvnw 
 
 or
 
