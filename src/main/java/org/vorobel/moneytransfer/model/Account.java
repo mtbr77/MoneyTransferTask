@@ -22,18 +22,30 @@ public class Account extends BaseEntity {
     public String balance;
 
     public static List<Account> listAll() {
-        return emCache.get().createNamedQuery("Account.listAll").getResultList();
+        EntityTransaction tx = emCache.get().getTransaction();
+        tx.begin();
+        var list = emCache.get().createNamedQuery("Account.listAll").getResultList();
+        tx.commit();
+        emCache.get().clear();
+        return list;
+
     }
 
     public static Account findById(Long id) {
-        return emCache.get().find(Account.class, id);
+        EntityTransaction tx = emCache.get().getTransaction();
+        tx.begin();
+        var account = emCache.get().find(Account.class, id);
+        tx.commit();
+        emCache.get().clear();
+        return account;
     }
 
     public static Account findById(Long id, LockModeType lockModeType) {
         EntityTransaction tx = emCache.get().getTransaction();
         tx.begin();
-        Account account = emCache.get().find(Account.class, id, lockModeType);
+        var account = emCache.get().find(Account.class, id, lockModeType);
         tx.commit();
+        emCache.get().clear();
         return account;
     }
 
@@ -42,6 +54,7 @@ public class Account extends BaseEntity {
         tx.begin();
         emCache.get().merge(account);
         tx.commit();
+        emCache.get().clear();
     }
 
     public static void deleteAll() {
@@ -49,6 +62,7 @@ public class Account extends BaseEntity {
         tx.begin();
         emCache.get().createNamedQuery("Account.deleteAll").executeUpdate();
         tx.commit();
+        emCache.get().clear();
     }
 
     public static String getTotalBalance(Account[] accounts) {

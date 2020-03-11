@@ -29,8 +29,6 @@ public class RestService {
     public void start() {
         provider.start(ConfigurationService.getRestServicePort());
 
-        System.out.println("PORT: " + provider.port());
-
         provider.routes(() -> {
             crud("/accounts/:id", accountController);
             crud("/transfers/:id", transferController);

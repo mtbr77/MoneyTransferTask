@@ -15,26 +15,12 @@ public abstract class BaseEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     public Long id;
 
-    /*@JsonIgnore
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    @JsonProperty("id")
-    public long getId() {
-        return id;
-    }*/
-
     public void save() {
         EntityTransaction tx = emCache.get().getTransaction();
         tx.begin();
         emCache.get().persist(this);
         tx.commit();
     }
-
-    /*public static void flush() {
-        emCache.get().flush();
-    }*/
 
     public void delete() {
         EntityTransaction tx = emCache.get().getTransaction();

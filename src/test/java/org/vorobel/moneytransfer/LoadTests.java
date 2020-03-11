@@ -60,7 +60,6 @@ public class LoadTests {
 
             String payload = "{\"source\":" + source + ","+ "\"destination\":" + destination + ","+ "\"amount\":" + transferAmount + "}";
 
-
             var response = Unirest.post(serverUrl + "/transfers").body(payload).asObject(Transfer.class);
 
             int status = response.getStatus();

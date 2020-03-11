@@ -22,11 +22,21 @@ public class Transfer extends BaseEntity {
     public boolean success = false;
 
     public static List<Transfer> listAll() {
-        return emCache.get().createNamedQuery("Transfer.listAll").getResultList();
+        EntityTransaction tx = emCache.get().getTransaction();
+        tx.begin();
+        var list = emCache.get().createNamedQuery("Transfer.listAll").getResultList();
+        tx.commit();
+        emCache.get().clear();
+        return list;
     }
 
     public static Transfer findById(Long id) {
-        return emCache.get().find(Transfer.class, id);
+        EntityTransaction tx = emCache.get().getTransaction();
+        tx.begin();
+        var transfer = emCache.get().find(Transfer.class, id);
+        tx.commit();
+        emCache.get().clear();
+        return transfer;
     }
 
     public static void deleteAll() {
@@ -34,6 +44,7 @@ public class Transfer extends BaseEntity {
         tx.begin();
         emCache.get().createNamedQuery("Transfer.deleteAll").executeUpdate();
         tx.commit();
+        emCache.get().clear();
     }
 
     @JsonIgnore
