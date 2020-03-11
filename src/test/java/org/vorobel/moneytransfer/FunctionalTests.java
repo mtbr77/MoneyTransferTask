@@ -14,11 +14,11 @@ import static org.assertj.core.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class FunctionalTests {
     private String serverUrl = "http://localhost:" + ConfigurationService.getRestServicePort();
-    private RestService restService = new RestService();
+    private RestService restService;
 
     @BeforeAll
     public void initAll() {
-        System.out.println("initAll");
+        restService = new RestService();
         restService.start();
     }
 

@@ -2,36 +2,52 @@ package org.vorobel.moneytransfer.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaUpdate;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
-@NamedQueries({@NamedQuery(name = "listAll", query = "SELECT a FROM Account a"),
-        @NamedQuery(name = "deleteAll", query = "DELETE FROM Account a")})
-@AllArgsConstructor
+@NamedQueries({@NamedQuery(name = "Account.listAll", query = "SELECT a FROM Account a"),
+        @NamedQuery(name = "Account.deleteAll", query = "DELETE FROM Account a")})
 @NoArgsConstructor
+@RequiredArgsConstructor
+@Getter
+@Setter
 public class Account extends BaseEntity {
+    @NonNull
     @JsonProperty(required = true)
     public String balance;
 
+    public static List<Account> listAll() {
+        return emCache.get().createNamedQuery("Account.listAll").getResultList();
+    }
+
     public static Account findById(Long id) {
-        return em.find(Account.class, id);
+        return emCache.get().find(Account.class, id);
     }
 
     public static Account findById(Long id, LockModeType lockModeType) {
-        return em.find(Account.class, id, lockModeType);
+        EntityTransaction tx = emCache.get().getTransaction();
+        tx.begin();
+        Account account = emCache.get().find(Account.class, id, lockModeType);
+        tx.commit();
+        return account;
     }
 
     public static void update(Account account) {
-        EntityTransaction tx = em.getTransaction();
+        EntityTransaction tx = emCache.get().getTransaction();
         tx.begin();
-        em.merge(account);
+        emCache.get().merge(account);
+        tx.commit();
+    }
+
+    public static void deleteAll() {
+        EntityTransaction tx = emCache.get().getTransaction();
+        tx.begin();
+        emCache.get().createNamedQuery("Account.deleteAll").executeUpdate();
         tx.commit();
     }
 

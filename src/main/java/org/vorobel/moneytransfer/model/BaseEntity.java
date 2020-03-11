@@ -6,14 +6,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.*;
 import java.util.List;
 
-public class BaseEntity {
-    protected static final EntityManager em = Persistence.createEntityManagerFactory("").createEntityManager();
+@MappedSuperclass
+public abstract class BaseEntity {
+    protected static EntityManagerFactory emf = Persistence.createEntityManagerFactory("db-manager");
+    protected static ThreadLocal<EntityManager> emCache = ThreadLocal.withInitial(() -> emf.createEntityManager());
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public Long id;
 
-    @JsonIgnore
+    /*@JsonIgnore
     public void setId(long id) {
         this.id = id;
     }
@@ -21,34 +23,23 @@ public class BaseEntity {
     @JsonProperty("id")
     public long getId() {
         return id;
-    }
-
-    public static <T extends BaseEntity> List<T> listAll() {
-        return em.createNamedQuery("listAll").getResultList();
-    }
+    }*/
 
     public void save() {
-        EntityTransaction tx = em.getTransaction();
+        EntityTransaction tx = emCache.get().getTransaction();
         tx.begin();
-        em.persist(this);
+        emCache.get().persist(this);
         tx.commit();
     }
 
     /*public static void flush() {
-        em.flush();
+        emCache.get().flush();
     }*/
 
     public void delete() {
-        EntityTransaction tx = em.getTransaction();
+        EntityTransaction tx = emCache.get().getTransaction();
         tx.begin();
-        em.remove(this);
-        tx.commit();
-    }
-
-    public static void deleteAll() {
-        EntityTransaction tx = em.getTransaction();
-        tx.begin();
-        em.createNamedQuery("deleteAll").executeUpdate();
+        emCache.get().remove(this);
         tx.commit();
     }
 }

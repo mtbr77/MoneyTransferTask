@@ -11,7 +11,6 @@ public class RestService {
     private TransferController transferController = new TransferController();
 
     public RestService() {
-        System.out.println("create REST");
         if (ConfigurationService.isSwaggerNeeded()) {
             provider = Javalin.create(SwaggerService.getSwaggerPluginConfigConsumer());
         } else {

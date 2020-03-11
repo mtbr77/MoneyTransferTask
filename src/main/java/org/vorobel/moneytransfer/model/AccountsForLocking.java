@@ -15,16 +15,18 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class AccountsForLocking extends BaseEntity {
-    public long sourceId;
-    public long destinationId;
-
-    private static final String accountsAlreadyInvolved = "sourceId = ?1 OR destinationId = ?1 OR sourceId = ?2 OR destinationId = ?2";
+    @NonNull public long sourceId;
+    @NonNull public long destinationId;
 
     public static AccountsForLocking getFirstRegisteredAccountsForLockingWithTheSameIds(Transfer transfer) {
-        return (AccountsForLocking) em.createQuery("SELECT a FROM AccountsForLocking a WHERE " + accountsAlreadyInvolved).setParameter("1",transfer.sourceId).setParameter("2",transfer.destinationId).getSingleResult();
+        return (AccountsForLocking) emCache.get()
+                .createQuery("SELECT a FROM AccountsForLocking a WHERE a.sourceId = ?1 OR a.destinationId = ?1 OR a.sourceId = ?2 OR a.destinationId = ?2")
+                .setParameter(1,transfer.sourceId)
+                .setParameter(2,transfer.destinationId)
+                .getSingleResult();
     }
 
     public static AccountsForLocking findById(Long id) {
-        return em.find(AccountsForLocking.class, id);
+        return emCache.get().find(AccountsForLocking.class, id);
     }
 }

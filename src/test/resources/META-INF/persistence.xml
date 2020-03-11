@@ -31,7 +31,7 @@
 
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
-            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:moneytransfertestdb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:moneytransfertestdb;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1"/>
             <property name="hibernate.id.new_generator_mappings" value="true"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
             <property name="hibernate.hbm2ddl.auto" value="create-drop"/>

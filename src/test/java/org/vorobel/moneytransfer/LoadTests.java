@@ -7,6 +7,7 @@ import org.junit.jupiter.api.*;
 import org.vorobel.moneytransfer.model.Account;
 import org.vorobel.moneytransfer.model.Transfer;
 import org.vorobel.moneytransfer.service.ConfigurationService;
+import org.vorobel.moneytransfer.service.RestService;
 
 import java.math.BigDecimal;
 import java.util.Random;
@@ -20,14 +21,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class LoadT {
+public class LoadTests {
     private final String serverUrl = "http://localhost:" + ConfigurationService.getRestServicePort();
+    private RestService restService;
     private final String initialBalance = ConfigurationService.getInitialBalance();
     private final String transferAmount = ConfigurationService.getTransferAmount();
     private final long expectedAccounts = ConfigurationService.getAccountsNumber();
     private final long expectedTransfersAmount = ConfigurationService.getTransfersNumber();
     private final String accountPayload = "{\"balance\":" + initialBalance + "}";
-    private final long initialId = 4;
+    private final long initialId = 1;
     private AtomicLong accountsCounter;
     private BigDecimal expectedTotalBalance;
     private Random random = new Random();
@@ -79,7 +81,13 @@ public class LoadT {
 
         return BigDecimal.ZERO;
     }
-/*
+
+    @BeforeAll
+    public void initAll() {
+        restService = new RestService();
+        restService.start();
+    }
+
     @Test
     @Order(1)
     public void AccountsCreationTest() throws InterruptedException {
@@ -113,5 +121,11 @@ public class LoadT {
         System.out.println("% of failed transfers = " + (failedTransfersCounter.intValue()*100/expectedTransfersAmount));
 
         assertThat(getTotalBalance().compareTo(expectedTotalBalance)).isEqualTo(0);
-    }*/
+    }
+
+    @AfterAll
+    public void tearDownAll() {
+        restService.stop();
+        Unirest.shutDown();
+    }
 }

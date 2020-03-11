@@ -7,9 +7,12 @@ import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
-@NamedQuery(name = "listAll", query = "SELECT t FROM Transfer t")
+@NamedQueries({
+@NamedQuery(name = "Transfer.listAll", query = "SELECT t FROM Transfer t"),
+@NamedQuery(name = "Transfer.deleteAll", query = "DELETE FROM Transfer t")})
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class Transfer extends BaseEntity {
@@ -18,8 +21,19 @@ public class Transfer extends BaseEntity {
     @NonNull @JsonProperty(required = true) public String amount;
     public boolean success = false;
 
+    public static List<Transfer> listAll() {
+        return emCache.get().createNamedQuery("Transfer.listAll").getResultList();
+    }
+
     public static Transfer findById(Long id) {
-        return em.find(Transfer.class, id);
+        return emCache.get().find(Transfer.class, id);
+    }
+
+    public static void deleteAll() {
+        EntityTransaction tx = emCache.get().getTransaction();
+        tx.begin();
+        emCache.get().createNamedQuery("Transfer.deleteAll").executeUpdate();
+        tx.commit();
     }
 
     @JsonIgnore
